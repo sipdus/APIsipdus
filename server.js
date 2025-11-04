@@ -1,19 +1,20 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
-const app = express();
 
-// Middleware
+const app = express();
+const PORT = 3000;
+
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
 // Rotas
 const userRoutes = require('./routes/users');
+const medidasRoutes = require('./routes/medidas');
+
 app.use('/api/users', userRoutes);
+app.use('/api/medidas', medidasRoutes);
 
-// Teste rápido
-app.get('/', (req, res) => {
-  res.send('API funcionando!');
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
