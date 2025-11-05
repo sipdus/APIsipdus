@@ -1,42 +1,29 @@
-const db = require('../db');
+const supabase = require('../supabase');
 
-// Registrar nova medição
-exports.addMedida = (req, res) => {
+exports.addMedida = async (req, res) => {
   const { user_id, glicose, bpm, spo2 } = req.body;
-
-  if (!user_id || glicose === undefined || bpm === undefined || spo2 === undefined) {
+  if (!user_id || glicose === undefined || bpm === undefined || spo2 === undefined)
     return res.status(400).json({ error: 'Preencha todos os campos.' });
-  }
 
-  const sql = `
-    INSERT INTO medidas (user_id, glicose, bpm, spo2)
-    VALUES (?, ?, ?, ?)
-  `;
+  const { data, error } = await supabase
+    .from('medidas')
+    .insert([{ user_id, glicose, bpm, spo2 }]);
 
-  db.run(sql, [user_id, glicose, bpm, spo2], function (err) {
-    if (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: 'Erro ao salvar medição.' });
-    }
+  if (error) return res.status(500).json({ error: error.message });
 
-    res.status(201).json({
-      message: 'Medição salva com sucesso!',
-      medida_id: this.lastID
-    });
-  });
+  res.status(201).json({ message: 'Medição salva com sucesso!', medida_id: data[0].id });
 };
 
-// Listar todas as medições de um usuário
-exports.getMedidasByUser = (req, res) => {
+exports.getMedidasByUser = async (req, res) => {
   const { user_id } = req.params;
 
-  const sql = 'SELECT * FROM medidas WHERE user_id = ? ORDER BY data DESC';
-  db.all(sql, [user_id], (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: 'Erro ao buscar medições.' });
-    }
+  const { data, error } = await supabase
+    .from('medidas')
+    .select('*')
+    .eq('user_id', user_id)
+    .order('data', { ascending: false });
 
-    res.status(200).json(rows);
-  });
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.status(200).json(data);
 };

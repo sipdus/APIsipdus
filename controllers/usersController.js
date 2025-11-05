@@ -1,43 +1,33 @@
-const db = require('../db');
+const supabase = require('../supabase');
 
-// Cadastro de usuário
-exports.registerUser = (req, res) => {
+// Cadastro
+exports.registerUser = async (req, res) => {
   const { nome, email, senha } = req.body;
-
-  if (!nome || !email || !senha) {
+  if (!nome || !email || !senha)
     return res.status(400).json({ error: 'Preencha todos os campos.' });
-  }
 
-  const sql = 'INSERT INTO users (nome, email, senha) VALUES (?, ?, ?)';
-  db.run(sql, [nome, email, senha], function (err) {
-    if (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: 'Erro ao cadastrar usuário.' });
-    }
-    res.status(201).json({ message: 'Usuário cadastrado com sucesso!', userId: this.lastID });
-  });
+  const { data, error } = await supabase
+    .from('users')
+    .insert([{ nome, email, senha }]);
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.status(201).json({ message: 'Usuário cadastrado com sucesso!', userId: data[0].id });
 };
 
-// Login de usuário
-exports.loginUser = (req, res) => {
+// Login
+exports.loginUser = async (req, res) => {
   const { email, senha } = req.body;
+  if (!email || !senha) return res.status(400).json({ error: 'Informe email e senha.' });
 
-  if (!email || !senha) {
-    return res.status(400).json({ error: 'Informe email e senha.' });
-  }
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('email', email)
+    .eq('senha', senha)
+    .single();
 
-  const sql = 'SELECT * FROM users WHERE email = ? AND senha = ?';
-  db.get(sql, [email, senha], (err, row) => {
-    if (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: 'Erro ao fazer login.' });
-    }
+  if (error || !data) return res.status(401).json({ error: 'Usuário ou senha incorretos.' });
 
-    if (!row) {
-      return res.status(401).json({ error: 'Usuário ou senha incorretos.' });
-    }
-
-    res.status(200).json({ message: 'Login realizado com sucesso!', user: row });
-  });
+  res.status(200).json({ message: 'Login realizado com sucesso!', user: data });
 };
-
