@@ -1,24 +1,24 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const PORT = 3000;
-
+app.use(express.json());
 app.use(cors());
-app.use(bodyParser.json());
 
-// Rotas
-const userRoutes = require('./routes/users');
-const medidasRoutes = require('./routes/medidas');
-const refeicoesRoutes = require('./routes/refeicoes');
-const alimentosRoutes = require('./routes/alimentos');
+// Importar rotas
+const alimentosRoutes = require('./routes/alimentosRoutes');
+const refeicoesRoutes = require('./routes/refeicoesRoutes');
+const medicoesRoutes = require('./routes/medicoesRoutes');
+const usuariosRoutes = require('./routes/usuariosRoutes');
 
-app.use('/api/refeicoes', refeicoesRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/medidas', medidasRoutes);
-app.use('/api/alimentos', alimentosRoutes);
+// Usar rotas
+app.use('/alimentos', alimentosRoutes);
+app.use('/refeicoes', refeicoesRoutes);
+app.use('/medicoes', medicoesRoutes);
+app.use('/usuarios', usuariosRoutes);
 
+// Inicializar servidor
+const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
 });

@@ -1,28 +1,73 @@
-const supabase = require('../supabase');
+const { createClient } = require('@supabase/supabase-js');
 
-exports.addRefeicao = async (req, res) => {
-  const { user_id, nome, quantidade, carboidratos, calorias } = req.body;
-  if (!user_id || !nome) return res.status(400).json({ error: 'Campos obrigatórios: user_id e nome.' });
+const supabase = require('../config/supabase');
 
-  const { data, error } = await supabase
-    .from('refeicoes')
-    .insert([{ user_id, nome, quantidade, carboidratos, calorias }]);
 
-  if (error) return res.status(500).json({ error: error.message });
-
-  res.status(201).json({ message: 'Refeição salva com sucesso!', refeicao_id: data[0].id });
+// 🟩 Listar todas as refeições
+exports.getAllRefeicoes = async (req, res) => {
+  try {
+    const { data, error } = await supabase.from('refeicoes').select('*');
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-exports.getRefeicoesByUser = async (req, res) => {
-  const { user_id } = req.params;
+// 🟦 Buscar refeição por ID
+exports.getRefeicaoById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { data, error } = await supabase
+      .from('refeicoes')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-  const { data, error } = await supabase
-    .from('refeicoes')
-    .select('*')
-    .eq('user_id', user_id)
-    .order('data', { ascending: false });
+// 🟨 Adicionar refeição
+exports.addRefeicao = async (req, res) => {
+  const { usuario_id, nome, data, alimentos } = req.body;
+  try {
+    const { data: result, error } = await supabase.from('refeicoes').insert([
+      { usuario_id, nome, data, alimentos }
+    ]);
+    if (error) throw error;
+    res.status(201).json({ message: 'Refeição adicionada com sucesso!', result });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-  if (error) return res.status(500).json({ error: error.message });
+// 🟥 Atualizar refeição
+exports.updateRefeicao = async (req, res) => {
+  const { id } = req.params;
+  const { usuario_id, nome, data, alimentos } = req.body;
+  try {
+    const { data: result, error } = await supabase
+      .from('refeicoes')
+      .update({ usuario_id, nome, data, alimentos })
+      .eq('id', id);
+    if (error) throw error;
+    res.json({ message: 'Refeição atualizada com sucesso!', result });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-  res.status(200).json(data);
+// ⛔ Deletar refeição
+exports.deleteRefeicao = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { error } = await supabase.from('refeicoes').delete().eq('id', id);
+    if (error) throw error;
+    res.json({ message: 'Refeição deletada com sucesso!' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
