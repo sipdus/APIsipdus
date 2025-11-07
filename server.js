@@ -17,8 +17,13 @@ app.use('/refeicoes', refeicoesRoutes);
 app.use('/medicoes', medicoesRoutes);
 app.use('/usuarios', usuariosRoutes);
 
-// Inicializar servidor
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
-});
+// Exportar o app (importante para o Vercel)
+module.exports = app;
+
+// Se estiver rodando localmente, inicia o servidor normalmente
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+  });
+}

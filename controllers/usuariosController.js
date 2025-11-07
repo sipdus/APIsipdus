@@ -1,7 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
-
 const supabase = require('../config/supabase');
-
 
 // 🟩 Listar usuários
 exports.getAllUsuarios = async (req, res) => {
@@ -30,7 +27,7 @@ exports.getUsuarioById = async (req, res) => {
   }
 };
 
-// 🟨 Adicionar usuário
+// 🟨 Adicionar usuário (cadastro)
 exports.addUsuario = async (req, res) => {
   const { nome, email, senha, idade, peso, altura } = req.body;
   try {
@@ -39,6 +36,29 @@ exports.addUsuario = async (req, res) => {
     ]);
     if (error) throw error;
     res.status(201).json({ message: 'Usuário criado com sucesso!', result });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// 🔹 Login de usuário
+exports.loginUsuario = async (req, res) => {
+  const { email, senha } = req.body;
+  if (!email || !senha) {
+    return res.status(400).json({ error: "Email e senha são obrigatórios." });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('email', email)
+      .eq('senha', senha)
+      .single();
+
+    if (error) return res.status(401).json({ error: "Usuário ou senha incorretos." });
+
+    res.json({ user: data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
