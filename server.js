@@ -2,28 +2,32 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+
 app.use(express.json());
 app.use(cors());
 
-// Importar rotas
-const alimentosRoutes = require('./routes/alimentosRoutes');
-const refeicoesRoutes = require('./routes/refeicoesRoutes');
-const medicoesRoutes = require('./routes/medicoesRoutes');
-const usuariosRoutes = require('./routes/usuariosRoutes');
+// 🔹 Importar rotas
+const alimentosRoutes = require('./APIsipdus/routes/alimentosRoutes');
+const refeicoesRoutes = require('./APIsipdus/routes/refeicoesRoutes');
+const medicoesRoutes = require('./APIsipdus/routes/medicoesRoutes');
+const usuariosRoutes = require('./APIsipdus/routes/usuariosRoutes');
 
-// Usar rotas
+// 🔹 Usar rotas
 app.use('/alimentos', alimentosRoutes);
 app.use('/refeicoes', refeicoesRoutes);
 app.use('/medicoes', medicoesRoutes);
 app.use('/usuarios', usuariosRoutes);
 
-// Exportar o app (importante para o Vercel)
+// ✅ Adicione isto aqui (rota principal)
+app.get('/', (req, res) => {
+  res.send('✅ API SIPDUS está rodando!');
+});
+
+// ✅ Exportar o app para o Vercel
 module.exports = app;
 
-// Se estiver rodando localmente, inicia o servidor normalmente
+// ✅ Rodar localmente apenas quando não for Vercel
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://localhost:${PORT}`));
 }
