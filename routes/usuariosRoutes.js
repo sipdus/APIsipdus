@@ -2,12 +2,24 @@ const express = require('express');
 const router = express.Router();
 const usuariosController = require('../controllers/usuariosController');
 
-// 🔹 Rotas REST
+// 🔹 Rotas REST para usuários
+
+// Listar todos os usuários
 router.get('/', usuariosController.getAllUsuarios);
+
+// Buscar usuário por ID
 router.get('/:id', usuariosController.getUsuarioById);
-router.post('/', usuariosController.addUsuario);
-router.post('/login', usuariosController.loginUsuario); // nova rota
+
+// Cadastrar novo usuário
+router.post('/register', usuariosController.addUsuario);
+
+// Login de usuário
+router.post('/login', usuariosController.loginUsuario);
+
+// Atualizar usuário por ID
 router.put('/:id', usuariosController.updateUsuario);
+
+// Deletar usuário por ID
 router.delete('/:id', usuariosController.deleteUsuario);
 
 module.exports = router;
