@@ -20,7 +20,7 @@ exports.getUsuarioById = async (req, res) => {
       .select('*')
       .eq('id', id)
       .single();
-    if (error) throw error;
+    if (error) return res.status(404).json({ error: 'Usuário não encontrado.' });
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -29,10 +29,14 @@ exports.getUsuarioById = async (req, res) => {
 
 // 🟨 Adicionar usuário (cadastro)
 exports.addUsuario = async (req, res) => {
-  const { nome, email, senha, idade, peso, altura } = req.body;
+  const { nome, email, senha } = req.body; // remover idade, peso, altura
+  if (!nome || !email || !senha) {
+    return res.status(400).json({ error: 'Nome, email e senha são obrigatórios.' });
+  }
+
   try {
     const { data: result, error } = await supabase.from('usuarios').insert([
-      { nome, email, senha, idade, peso, altura }
+      { nome, email, senha }
     ]);
     if (error) throw error;
     res.status(201).json({ message: 'Usuário criado com sucesso!', result });
@@ -67,11 +71,11 @@ exports.loginUsuario = async (req, res) => {
 // 🟥 Atualizar usuário
 exports.updateUsuario = async (req, res) => {
   const { id } = req.params;
-  const { nome, email, senha, idade, peso, altura } = req.body;
+  const { nome, email, senha } = req.body; // remover idade, peso, altura
   try {
     const { data: result, error } = await supabase
       .from('usuarios')
-      .update({ nome, email, senha, idade, peso, altura })
+      .update({ nome, email, senha })
       .eq('id', id);
     if (error) throw error;
     res.json({ message: 'Usuário atualizado com sucesso!', result });
