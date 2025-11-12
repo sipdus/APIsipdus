@@ -16,8 +16,8 @@ const usuariosRoutes = require('./routes/usuariosRoutes');
 // 🟢 Usar rotas com prefixos padronizados
 app.use('/alimentos', alimentosRoutes);
 app.use('/refeicoes', refeicoesRoutes);
-app.use('/medicoes', medicoesRoutes);
-app.use('/usuarios', usuariosRoutes); // ✅ rotas /usuarios/register, /usuarios/login etc.
+app.use('/medidas', medicoesRoutes);
+app.use('/users', usuariosRoutes); // ✅ rotas /usuarios/register, /usuarios/login etc.
 
 // 🟢 Endpoint raiz para teste
 app.get('/', (req, res) => {

@@ -3,7 +3,7 @@ const supabase = require('../config/supabase');
 // 🟩 Listar usuários
 exports.getAllUsuarios = async (req, res) => {
   try {
-    const { data, error } = await supabase.from('usuarios').select('*');
+    const { data, error } = await supabase.from('users').select('*');
     if (error) throw error;
     res.json(data);
   } catch (err) {
@@ -16,7 +16,7 @@ exports.getUsuarioById = async (req, res) => {
   const { id } = req.params;
   try {
     const { data, error } = await supabase
-      .from('usuarios')
+      .from('users')
       .select('*')
       .eq('id', id)
       .single();
@@ -29,14 +29,14 @@ exports.getUsuarioById = async (req, res) => {
 
 // 🟨 Adicionar usuário (cadastro)
 exports.addUsuario = async (req, res) => {
-  const { nome, email, senha } = req.body; // remover idade, peso, altura
-  if (!nome || !email || !senha) {
+  const { name, email, senha } = req.body; 
+  if (!name || !email || !senha) {
     return res.status(400).json({ error: 'Nome, email e senha são obrigatórios.' });
   }
 
   try {
-    const { data: result, error } = await supabase.from('usuarios').insert([
-      { nome, email, senha }
+    const { data: result, error } = await supabase.from('users').insert([
+      { name, email, senha }
     ]);
     if (error) throw error;
     res.status(201).json({ message: 'Usuário criado com sucesso!', result });
@@ -54,7 +54,7 @@ exports.loginUsuario = async (req, res) => {
 
   try {
     const { data, error } = await supabase
-      .from('usuarios')
+      .from('users')
       .select('*')
       .eq('email', email)
       .eq('senha', senha)
@@ -71,11 +71,11 @@ exports.loginUsuario = async (req, res) => {
 // 🟥 Atualizar usuário
 exports.updateUsuario = async (req, res) => {
   const { id } = req.params;
-  const { nome, email, senha } = req.body; // remover idade, peso, altura
+  const { name, email, senha } = req.body; // remover idade, peso, altura
   try {
     const { data: result, error } = await supabase
-      .from('usuarios')
-      .update({ nome, email, senha })
+      .from('users')
+      .update({ name, email, senha })
       .eq('id', id);
     if (error) throw error;
     res.json({ message: 'Usuário atualizado com sucesso!', result });
@@ -88,7 +88,7 @@ exports.updateUsuario = async (req, res) => {
 exports.deleteUsuario = async (req, res) => {
   const { id } = req.params;
   try {
-    const { error } = await supabase.from('usuarios').delete().eq('id', id);
+    const { error } = await supabase.from('users').delete().eq('id', id);
     if (error) throw error;
     res.json({ message: 'Usuário deletado com sucesso!' });
   } catch (err) {

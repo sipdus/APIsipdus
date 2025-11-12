@@ -32,10 +32,10 @@ exports.getAlimentoById = async (req, res) => {
 
 // 🟨 Adicionar novo alimento
 exports.addAlimento = async (req, res) => {
-  const { nome, calorias, proteina, lipideos, colesterol, carboidratos, fibra } = req.body;
+  const { nome, calorias, proteinas, lipideos, colesterol, carboidratos, fibra } = req.body;
   try {
     const { data, error } = await supabase.from('alimentos').insert([
-      { nome, calorias, proteina, lipideos, colesterol, carboidratos, fibra }
+      { nome, calorias, proteinas, lipideos, colesterol, carboidratos, fibra }
     ]);
     if (error) throw error;
     res.status(201).json({ message: 'Alimento adicionado com sucesso!', data });
@@ -47,11 +47,11 @@ exports.addAlimento = async (req, res) => {
 // 🟥 Atualizar alimento
 exports.updateAlimento = async (req, res) => {
   const { id } = req.params;
-  const { nome, calorias, proteina, lipideos, colesterol, carboidratos, fibra } = req.body;
+  const { nome, calorias, proteinas, lipideos, colesterol, carboidratos, fibra } = req.body;
   try {
     const { data, error } = await supabase
       .from('alimentos')
-      .update({ nome, calorias, proteina, lipideos, colesterol, carboidratos, fibra })
+      .update({ nome, calorias, proteinas, lipideos, colesterol, carboidratos, fibra })
       .eq('id', id);
     if (error) throw error;
     res.json({ message: 'Alimento atualizado com sucesso!', data });

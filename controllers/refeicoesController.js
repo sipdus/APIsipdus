@@ -32,10 +32,10 @@ exports.getRefeicaoById = async (req, res) => {
 
 // 🟨 Adicionar refeição
 exports.addRefeicao = async (req, res) => {
-  const { usuario_id, nome, data, alimentos } = req.body;
+  const { user_id, nome, data, descricao } = req.body;
   try {
     const { data: result, error } = await supabase.from('refeicoes').insert([
-      { usuario_id, nome, data, alimentos }
+      { user_id, nome, data, descricao }
     ]);
     if (error) throw error;
     res.status(201).json({ message: 'Refeição adicionada com sucesso!', result });
@@ -47,11 +47,11 @@ exports.addRefeicao = async (req, res) => {
 // 🟥 Atualizar refeição
 exports.updateRefeicao = async (req, res) => {
   const { id } = req.params;
-  const { usuario_id, nome, data, alimentos } = req.body;
+  const { user_id, nome, data, descricao } = req.body;
   try {
     const { data: result, error } = await supabase
       .from('refeicoes')
-      .update({ usuario_id, nome, data, alimentos })
+      .update({ user_id, nome, data, descricao })
       .eq('id', id);
     if (error) throw error;
     res.json({ message: 'Refeição atualizada com sucesso!', result });
