@@ -1,10 +1,6 @@
-const { createClient } = require('@supabase/supabase-js');
-
 const supabase = require('../config/supabase');
 
-
-// 🟩 Listar medições
-exports.getAllMedicoes = async (req, res) => {
+exports.getAllMedidas = async (req, res) => {
   try {
     const { data, error } = await supabase.from('medidas').select('*');
     if (error) throw error;
@@ -14,59 +10,66 @@ exports.getAllMedicoes = async (req, res) => {
   }
 };
 
-// 🟦 Buscar medição por ID
-exports.getMedicaoById = async (req, res) => {
+exports.getMedidaById = async (req, res) => {
   const { id } = req.params;
+
   try {
     const { data, error } = await supabase
       .from('medidas')
       .select('*')
       .eq('id', id)
       .single();
+
     if (error) throw error;
+
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// 🟨 Adicionar medição
-exports.addMedicao = async (req, res) => {
+exports.addMedida = async (req, res) => {
   const { user_id, glicose, bpm, spo2, data } = req.body;
+
   try {
-    const { data: result, error } = await supabase.from('medidas').insert([
-      { user_id, glicose, bpm, spo2, data }
-    ]);
+    const { data: result, error } = await supabase
+      .from('medidas')
+      .insert([{ user_id, glicose, bpm, spo2, data }]);
+
     if (error) throw error;
-    res.status(201).json({ message: 'Medição adicionada com sucesso!', result });
+
+    res.status(201).json({ message: 'Medição adicionada!', result });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// 🟥 Atualizar medição
-exports.updateMedicao = async (req, res) => {
+exports.updateMedida = async (req, res) => {
   const { id } = req.params;
   const { user_id, glicose, bpm, spo2, data } = req.body;
+
   try {
     const { data: result, error } = await supabase
       .from('medidas')
       .update({ user_id, glicose, bpm, spo2, data })
       .eq('id', id);
+
     if (error) throw error;
-    res.json({ message: 'Medição atualizada com sucesso!', result });
+
+    res.json({ message: 'Medição atualizada!', result });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// ⛔ Deletar medição
-exports.deleteMedicao = async (req, res) => {
+exports.deleteMedida = async (req, res) => {
   const { id } = req.params;
+
   try {
     const { error } = await supabase.from('medidas').delete().eq('id', id);
     if (error) throw error;
-    res.json({ message: 'Medição deletada com sucesso!' });
+
+    res.json({ message: 'Medição deletada!' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

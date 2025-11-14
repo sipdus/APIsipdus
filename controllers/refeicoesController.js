@@ -1,9 +1,5 @@
-const { createClient } = require('@supabase/supabase-js');
-
 const supabase = require('../config/supabase');
 
-
-// 🟩 Listar todas as refeições
 exports.getAllRefeicoes = async (req, res) => {
   try {
     const { data, error } = await supabase.from('refeicoes').select('*');
@@ -14,59 +10,17 @@ exports.getAllRefeicoes = async (req, res) => {
   }
 };
 
-// 🟦 Buscar refeição por ID
-exports.getRefeicaoById = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const { data, error } = await supabase
-      .from('refeicoes')
-      .select('*')
-      .eq('id', id)
-      .single();
-    if (error) throw error;
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// 🟨 Adicionar refeição
 exports.addRefeicao = async (req, res) => {
-  const { user_id, nome, data, descricao } = req.body;
-  try {
-    const { data: result, error } = await supabase.from('refeicoes').insert([
-      { user_id, nome, data, descricao }
-    ]);
-    if (error) throw error;
-    res.status(201).json({ message: 'Refeição adicionada com sucesso!', result });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+  const { user_id, descricao, data } = req.body;
 
-// 🟥 Atualizar refeição
-exports.updateRefeicao = async (req, res) => {
-  const { id } = req.params;
-  const { user_id, nome, data, descricao } = req.body;
   try {
     const { data: result, error } = await supabase
       .from('refeicoes')
-      .update({ user_id, nome, data, descricao })
-      .eq('id', id);
-    if (error) throw error;
-    res.json({ message: 'Refeição atualizada com sucesso!', result });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+      .insert([{ user_id, descricao, data }]);
 
-// ⛔ Deletar refeição
-exports.deleteRefeicao = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const { error } = await supabase.from('refeicoes').delete().eq('id', id);
     if (error) throw error;
-    res.json({ message: 'Refeição deletada com sucesso!' });
+
+    res.status(201).json({ message: 'Refeição criada!', result });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

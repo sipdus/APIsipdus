@@ -3,32 +3,32 @@ const cors = require('cors');
 
 const app = express();
 
-// 🟢 Middlewares
+// Middlewares
 app.use(express.json());
 app.use(cors());
 
-// 🟢 Importar rotas
+// Importar rotas corretamente
 const alimentosRoutes = require('./routes/alimentosRoutes');
 const refeicoesRoutes = require('./routes/refeicoesRoutes');
-const medicoesRoutes = require('./routes/medicoesRoutes');
+const medidasRoutes = require('./routes/medidasRoutes'); // ⬅ renomeado
 const usuariosRoutes = require('./routes/usuariosRoutes');
 
-// 🟢 Usar rotas com prefixos padronizados
+// Usar rotas com prefixos padronizados
 app.use('/alimentos', alimentosRoutes);
 app.use('/refeicoes', refeicoesRoutes);
-app.use('/medidas', medicoesRoutes);
-app.use('/users', usuariosRoutes); // ✅ rotas /usuarios/register, /usuarios/login etc.
+app.use('/medidas', medidasRoutes);
+app.use('/users', usuariosRoutes); // POST /users/register
 
-// 🟢 Endpoint raiz para teste
+// Endpoint raiz
 app.get('/', (req, res) => {
-  res.send('✅ API SIPDUS está rodando!');
+  res.send('API SIPDUS está rodando!');
 });
 
-// 🟢 Exportar o app para o Vercel
+// Exportar para Vercel
 module.exports = app;
 
-// 🟢 Rodar localmente (node server.js)
+// Rodar local (node server.js)
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
 }

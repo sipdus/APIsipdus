@@ -1,6 +1,6 @@
 const supabase = require('../config/supabase');
 
-// 🟩 Listar usuários
+// Listar usuários
 exports.getAllUsuarios = async (req, res) => {
   try {
     const { data, error } = await supabase.from('users').select('*');
@@ -11,46 +11,39 @@ exports.getAllUsuarios = async (req, res) => {
   }
 };
 
-// 🟦 Buscar usuário por ID
+// Buscar usuário por ID
 exports.getUsuarioById = async (req, res) => {
   const { id } = req.params;
   try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', id)
-      .single();
-    if (error) return res.status(404).json({ error: 'Usuário não encontrado.' });
+    const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+    if (error) throw error;
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// 🟨 Adicionar usuário (cadastro)
+// Cadastrar usuário
 exports.addUsuario = async (req, res) => {
-  const { name, email, senha } = req.body; 
+  const { name, email, senha } = req.body;
+
   if (!name || !email || !senha) {
-    return res.status(400).json({ error: 'Nome, email e senha são obrigatórios.' });
+    return res.status(400).json({ error: "name, email e senha são obrigatórios." });
   }
 
   try {
-    const { data: result, error } = await supabase.from('users').insert([
-      { name, email, senha }
-    ]);
+    const { data, error } = await supabase.from('users').insert([{ name, email, senha }]);
     if (error) throw error;
-    res.status(201).json({ message: 'Usuário criado com sucesso!', result });
+
+    res.status(201).json({ message: "Usuário criado com sucesso!", data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// 🔹 Login de usuário
+// Login usuário
 exports.loginUsuario = async (req, res) => {
   const { email, senha } = req.body;
-  if (!email || !senha) {
-    return res.status(400).json({ error: "Email e senha são obrigatórios." });
-  }
 
   try {
     const { data, error } = await supabase
@@ -60,7 +53,9 @@ exports.loginUsuario = async (req, res) => {
       .eq('senha', senha)
       .single();
 
-    if (error) return res.status(401).json({ error: "Usuário ou senha incorretos." });
+    if (error || !data) {
+      return res.status(401).json({ error: "Usuário ou senha incorretos." });
+    }
 
     res.json({ user: data });
   } catch (err) {
@@ -68,28 +63,33 @@ exports.loginUsuario = async (req, res) => {
   }
 };
 
-// 🟥 Atualizar usuário
+// Atualizar usuário
 exports.updateUsuario = async (req, res) => {
   const { id } = req.params;
-  const { name, email, senha } = req.body; // remover idade, peso, altura
+  const { name, email, senha } = req.body;
+
   try {
-    const { data: result, error } = await supabase
+    const { data, error } = await supabase
       .from('users')
       .update({ name, email, senha })
       .eq('id', id);
+
     if (error) throw error;
-    res.json({ message: 'Usuário atualizado com sucesso!', result });
+
+    res.json({ message: 'Usuário atualizado com sucesso!', data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// ⛔ Deletar usuário
+// Deletar usuário
 exports.deleteUsuario = async (req, res) => {
   const { id } = req.params;
+
   try {
     const { error } = await supabase.from('users').delete().eq('id', id);
     if (error) throw error;
+
     res.json({ message: 'Usuário deletado com sucesso!' });
   } catch (err) {
     res.status(500).json({ error: err.message });
