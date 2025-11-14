@@ -1,7 +1,11 @@
 {
   "name": "apisipdus",
   "version": "1.0.0",
+<<<<<<< HEAD
   "main": "index.js",
+=======
+  "main": "server.js",
+>>>>>>> e67226da687c02d73b1d16c81d3035c4127781ff
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
