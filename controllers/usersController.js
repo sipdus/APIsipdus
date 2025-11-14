@@ -3,13 +3,17 @@ const supabase = require('../config/supabase');
 // Listar usuários
 exports.getAllUsers = async (req, res) => {
   try {
-    const { data, error } = await supabase.from('users').select('*');
+    const { data, error } = await supabase
+      .from('users') 
+      .select('*');   
+
     if (error) throw error;
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // Buscar usuário por ID
 exports.getUserById = async (req, res) => {
@@ -20,7 +24,7 @@ exports.getUserById = async (req, res) => {
       .from('users')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     res.json(data);
@@ -58,9 +62,9 @@ exports.loginUser = async (req, res) => {
       .select('*')
       .eq('email', email)
       .eq('senha', senha)
-      .single();
+      .maybeSingle();
 
-    if (error || !data) {
+    if (!data) {
       return res.status(401).json({ error: "Usuário ou senha incorretos." });
     }
 
