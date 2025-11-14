@@ -26,5 +26,6 @@ module.exports = app;
 
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`Server rodando em http://localhost:${PORT}`));
-}
+  app.listen(PORT, '0.0.0.0', () => { // ✅ Adicione '0.0.0.0'
+  console.log(`🚀 Server running on port ${PORT}`);
+  });}
